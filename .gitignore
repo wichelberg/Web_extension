@@ -1,0 +1,16 @@
+# Extension private key (from "Pack extension"); manifest.json's "key" is the public half and is safe
+*.pem
+*.crx
+
+# Local secrets, in case any are added later
+.env
+.env.*
+secrets.json
+secrets.txt
+
+# Editor / OS
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store

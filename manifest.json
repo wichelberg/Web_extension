@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Zyraena Web Control",
+  "version": "1.1",
+  "description": "Lets Zyraena use Opera GX for you: tabs, reading pages, clicking, typing, downloads and uploads. She asks you before every step.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApLMeQ0ufR+vxuGXMCN7pYI6/53tuUmCM2eFbeRCF3HWJ05/TMicxnH+nES+ZcElFny8mdQ6ChaAMLFZSg45HemmfxaWx8vxbOJmexbgA9X4s1okqAyNxlXJljld6vT72spYd7OxdhZWyVTHN4AHSvV4SsTqoxXQ8hn3fxKew8adxxX+lgnHLk82DwJMEo11HfQm/5Cv1Y/iJI5L5muWA0S0WwUNixF2Cknf88Kh/tKbNcJN2IlCVUbFxazPZV0W5Xbeg9JBfVmHeKSQsDI8LLSQYN6GlLIgfhMQq9rJGQabA7ik/zuiytrewPZcK0JQvLwRfKMZrL/5VNdXqZiN7nQIDAQAB",
+  "permissions": ["tabs", "scripting", "downloads", "alarms"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_title": "Zyraena Web Control: not connected" }
+}
