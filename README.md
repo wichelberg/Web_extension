@@ -7,6 +7,8 @@ Through it she can:
 - read a page: its text and a numbered list of links, buttons, fields, drop areas and pictures
 - click, type (including picking from a dropdown and submitting a form)
 - download a link, a picture or a file (with Opera's own logins), and upload a file from the PC
+- control the video in a tab (YouTube or any site): loop on/off, its own volume, mute, and tell
+  its state (since 1.2; this replaced the old "Zyraena Video Controls" shortcut extension)
 
 WhatsApp isn't part of this extension any more: Zyraena reads and sends WhatsApp messages
 through the WhatsApp Desktop app (`whatsapp_tools.py`), so WhatsApp Web doesn't need to be open.
@@ -14,6 +16,10 @@ through the WhatsApp Desktop app (`whatsapp_tools.py`), so WhatsApp Web doesn't 
 **She asks before every step, reading included**, on the PC (a popup) and on Telegram at the
 same time. Whichever you answer first counts, and no answer within 10 minutes counts as no.
 The questions are asked by Zyraena, not by the extension, so they work while you're away.
+The video controls are the exception (the owner's choice): they only touch the video player.
+
+Fullscreen isn't done here: browsers allow it only after a real key press or click, so Zyraena
+presses YouTube's own `f` key for it.
 
 ## Install
 
@@ -22,7 +28,11 @@ The questions are asked by Zyraena, not by the extension, so they work while you
 3. **Load unpacked** → pick this folder (`Documents\Projects\Web_ControlExtention`).
 4. Optional: pin the extension. Its badge shows **ON** while it's connected to Zyraena.
 
-After changing the files here, press the reload button on the extension's card.
+After changing the files here, press the reload button on the extension's card. Opera loads the
+extension from this folder every time, so **if the folder moves, remove the extension and load it
+again from the new place**. Zyraena checks this (Opera's own list of loaded extensions, the version
+the extension reports when it connects, and whether it connects at all while Opera runs) and tells
+you on the PC and on Telegram when something is wrong, including other extensions whose folder is gone.
 
 ## How it works
 

@@ -97,7 +97,68 @@ const COMMANDS = {
     const id = await chrome.downloads.download({ url, conflictAction: "uniquify", saveAs: false });
     return finished(id, timeout);
   },
+
+  // The video in a tab: "state", "loop" (on: true/false, or toggle), "volume" (0-100), "mute"
+  // (on: true/false, or toggle). Runs videoControl in the page's own world, so YouTube's player
+  // API can be used. (Fullscreen can't be done from here: browsers allow it only after a real key
+  // press or click, so Zyraena presses YouTube's "f" for that.)
+  video: async ({ tab, action, on, volume }) => {
+    const [injection] = await chrome.scripting.executeScript({
+      target: { tabId: tab },
+      world: "MAIN",
+      args: [action, on ?? null, volume ?? null],
+      func: videoControl,
+    });
+    const outcome = injection?.result;
+    if (!outcome) throw new Error("the page didn't answer (it may still be loading)");
+    if (outcome.error) throw new Error(outcome.error);
+    return outcome;
+  },
 };
+
+// Runs inside the page (main world). Picks the page's main video (YouTube's player first, then
+// a playing one), does `action` and returns the video's state afterwards.
+function videoControl(action, on, volume) {
+  const videos = [...document.querySelectorAll("video")];
+  const video =
+    document.querySelector("video.html5-main-video") ||
+    videos.find((v) => !v.paused) ||
+    videos.find((v) => v.duration > 0) ||
+    videos[0];
+  if (!video) return { found: false };
+  const player = document.getElementById("movie_player");
+  const youtube = !!(player && typeof player.setVolume === "function");
+  const state = () => ({
+    found: true,
+    youtube,
+    loop: video.loop,
+    volume: youtube ? player.getVolume() : Math.round(video.volume * 100),
+    muted: youtube ? player.isMuted() : video.muted,
+    paused: video.paused,
+  });
+  if (action === "loop") {
+    // the same as YouTube's right-click "Loop"
+    video.loop = on === null ? !video.loop : !!on;
+  } else if (action === "volume") {
+    const level = Math.max(0, Math.min(100, Math.round(Number(volume))));
+    if (Number.isNaN(level)) return { error: "give the volume as a number from 0 to 100" };
+    if (youtube) {
+      player.setVolume(level);
+      if (level > 0) player.unMute(); else player.mute();
+    } else {
+      video.volume = level / 100;
+      video.muted = level === 0;
+    }
+  } else if (action === "mute") {
+    const muted = youtube ? player.isMuted() : video.muted;
+    const want = on === null ? !muted : !!on;
+    if (youtube) (want ? player.mute() : player.unMute());
+    else video.muted = want;
+  } else if (action !== "state") {
+    return { error: `unknown video action '${action}'` };
+  }
+  return state();
+}
 
 // --- helpers --------------------------------------------------------------------------------
 
@@ -117,6 +178,7 @@ function tabInfo(tab, focusedWindow) {
     active: tab.active,
     focused: focusedWindow === undefined ? undefined : tab.active && tab.windowId === focusedWindow,
     pinned: tab.pinned,
+    audible: tab.audible,
     window: tab.windowId,
   };
 }
